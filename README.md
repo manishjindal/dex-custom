@@ -74,6 +74,13 @@ $ cd examples/k8s
 $ ./gencert.sh
 ```
 
+Note: update gencert.sh with IP/DNS value in the following section
+```$xslt
+[alt_names]
+IP.1 = 167.71.228.11 // use this if you don't have dns name
+DNS.1 = dex.example.com
+```
+
 This will generate several files under the `ssl` directory, the important ones being `cert.pem` ,`key.pem` and `ca.pem`. The generated SSL certificate is for 'dex.example.com', although you could change this by editing `gencert.sh` if required.
 
 ### Configure the API server
@@ -107,6 +114,8 @@ spec:
        type: DirectoryOrCreate
 ```
 
+Note: Example dex.yaml has this block already, adjust it accordingly 
+
 Depending on your installation you may also find that certain folders are already mounted in this way and that you can simply copy the CA file into an existing folder for the same effect.
 
 #### Configure API server flags
@@ -121,6 +130,7 @@ Once the cluster is up and correctly configured, use kubectl to add the serving 
 
 ```
 $ kubectl create secret tls dex.example.com.tls --cert=ssl/cert.pem --key=ssl/key.pem
+$ kubectl create secret tls 167.71.228.11.tls --cert=ssl/cert.pem --key=ssl/key.pem
 ```
 
 Then create a secret for the GitHub OAuth2 client.
@@ -130,6 +140,11 @@ $ kubectl create secret \
     generic github-client \
     --from-literal=client-id=$GITHUB_CLIENT_ID \
     --from-literal=client-secret=$GITHUB_CLIENT_SECRET
+    
+  kubectl create secret  \
+  generic github-client \
+  --from-literal=client-id=482a6e25e61329682b14 \
+  --from-literal=client-secret=d4df911a3414f3d93dd4a9ceb5102031f0e21ce2
 ```
 
 ### Deploy the Dex server
@@ -148,6 +163,7 @@ The `example-app` can be used to log into the cluster and get an ID Token. To bu
 
 ```
 $ ./bin/example-app --issuer https://dex.example.com:32000 --issuer-root-ca examples/k8s/ssl/ca.pem
+$ ./example-app --issuer https://167.71.228.11:32000 --issuer-root-ca  ca.pem
 ```
 
 Please note that the `example-app` will listen at http://127.0.0.1:5555 and can be changed with the `--listen` flag.

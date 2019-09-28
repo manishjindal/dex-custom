@@ -26,6 +26,8 @@ spec:
           mountPath: /etc/dex/cfg
         - name: tls
           mountPath: /etc/dex/tls
+        - name: etc-ssl-certs
+          mountPath: /etc/ssl/certs
 
         env:
         - name: GITHUB_CLIENT_ID
@@ -47,7 +49,11 @@ spec:
             path: config.yaml
       - name: tls
         secret:
-          secretName: dex.example.com.tls
+          secretName: 167.71.228.14.tls
+      - name: etc-ssl-certs
+        hostPath:
+          path: /etc/ssl/certs
+          type: DirectoryOrCreate
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -55,7 +61,7 @@ metadata:
   name: dex
 data:
   config.yaml: |
-    issuer: https://dex.example.com:32000
+    issuer: https://167.71.228.14:32000
     storage:
       type: kubernetes
       config:
@@ -69,9 +75,9 @@ data:
       id: github
       name: GitHub
       config:
-        clientID: $GITHUB_CLIENT_ID
-        clientSecret: $GITHUB_CLIENT_SECRET
-        redirectURI: https://dex.example.com:32000/callback
+        clientID: 482a6e25e61329682b17
+        clientSecret: d4df911a3414f3d93dd4a9ceb5102031f0e21ce3
+        redirectURI: https://167.71.228.14:32000/callback
         org: kubernetes
     oauth2:
       skipApprovalScreen: true
